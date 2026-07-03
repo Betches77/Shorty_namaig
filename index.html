@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title> Shorty_nmg💌</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+
+/* ============ QUIZ STYLES ============ */
+#quizOverlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg,#fff0f6 0%,#fff8f0 50%,#f0f4ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  font-family: 'Poppins','Segoe UI',sans-serif;
+  padding: 1.5rem;
+  overflow: hidden;
+}
+.quiz-box {
+  position: relative;
+  z-index: 1;
+  width: 520px;
+  max-width: 92vw;
+  margin-top: 110px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid #f7c8da;
+  border-radius: 28px;
+  box-shadow: 0 12px 44px #e8426e26, 0 2px 10px #f0a0c020;
+  padding: 2.4rem 2.2rem;
+  text-align: center;
+  min-height: 380px;
+}
+.question { padding-top: 1rem; }
+.quiz-gif {
+  position: absolute;
+  top: -234px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 340px;
+  max-width: 94%;
+  height: 210px;
+  margin: 0;
+  border-radius: 22px;
+  border: 4px solid #fff;
+  box-shadow: 0 14px 34px #e8426e3d, 0 2px 10px #f0a0c030;
+  background: #fff8fb;
+  object-fit: cover;
+  z-index: 2;
+}
+.quiz-heart-deco {
+  position: absolute;
+  pointer-events: none;
+  font-size: 1.3rem;
+  opacity: .35;
+  animation: sparkleFloat 3.2s ease-in-out infinite;
+  z-index: 0;
+}
+@keyframes sparkleFloat {
+  0%, 100% { opacity: .2; transform: translateY(0) scale(.85) rotate(0deg); }
+  50% { opacity: .85; transform: translateY(-10px) scale(1.15) rotate(8deg); }
+}
+.quiz-box button {
+  font-family: 'Poppins','Segoe UI',sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 11px 28px;
+  border-radius: 50px;
+  border: none;
+  background: linear-gradient(135deg,#e8426e,#f07aa0);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 4px 16px #e8426e44;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.quiz-box button:hover { transform: scale(1.06); box-shadow: 0 6px 22px #e8426e55; }
+.quiz-box button#q1no,
+.quiz-box button#q2no,
+.quiz-box button#q3no {
+  background: rgba(200,150,170,0.15);
+  color: #c07090;
+  border: 1.5px solid #e8b4cc;
+  box-shadow: none;
+}
+.quiz-box button#q1no:hover,
+.quiz-box button#q2no:hover,
+.quiz-box button#q3no:hover { background: rgba(200,150,170,0.28); box-shadow: none; }
+.quiz-box .q3-extra-yes { background: linear-gradient(135deg,#e8426e,#f07aa0); color:#fff; box-shadow: 0 4px 14px #e8426e40; }
+
+.question { display: none; }
+.question.active { display: block; }
+.question p {
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.6;
+  margin-bottom: 1.4rem;
+  color: #8b2252;
+}
+.question p:first-of-type { margin-top: .2rem; }
+#q1-wrap { position: relative; height: 80px; margin-top: 1.6rem; }
+#q1no, #q1yes { position: absolute; top: 0; }
+#q2-wrap { display: flex; justify-content: center; align-items: center; gap: 24px; min-height: 60px; margin-top: 1.4rem; }
+#q3-wrap { position: relative; height: 90px; margin-top: 1.6rem; }
+#q3-wrap button { position: absolute; left: 50%; top: 50%; }
+.quiz-dots { display: flex; gap: .5rem; justify-content: center; margin-bottom: 1.2rem; }
+.quiz-dot { width: 8px; height: 8px; border-radius: 50%; background: #f0c0d0; transition: background .3s, transform .3s; }
+.quiz-dot.active { background: #e8426e; transform: scale(1.2); }
+
+/* ============ SITE STYLES ============ */
+.big-heart{ position:fixed; font-size:40px; animation:heartFade 2s forwards; pointer-events:none; }
+.flower-burst { position: fixed; left:0; top:0; pointer-events: none; font-size: 24px; z-index: 9999; animation: flowerExplode 1.2s ease-out forwards; }
+@keyframes flowerExplode {
+  0% { opacity: 1; transform: translate(0, 0) scale(1) rotate(0deg); }
+  100% { opacity: 0; transform: translate(var(--x), var(--y)) scale(0.3) rotate(360deg); }
+}
+.flower-deco { position: absolute; animation: float 6s ease-in-out infinite; }
+@keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { min-height: 100vh; background: linear-gradient(135deg,#fff0f6 0%,#fff8f0 50%,#f0f4ff 100%); font-family: 'Segoe UI',sans-serif; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+#mainSite {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+}
+#app { width: 100%; min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; }
+.petal { position: fixed; pointer-events: none; animation: fall linear infinite; opacity: 0.7; z-index: 0; }
+@keyframes fall { 0% { transform: translateY(-60px) rotate(0deg); opacity: .8 } 100% { transform: translateY(110vh) rotate(360deg) translateX(40px); opacity: 0 } }
+
+.screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; transition: opacity .5s, transform .5s; text-align: center; z-index: 1; }
+.screen.hidden { opacity: 0; pointer-events: none; transform: scale(.96); }
+h1.title { font-family: 'Dancing Script',cursive; font-size: 2.4rem; color: #c2456a; margin-bottom: .5rem; text-shadow: 0 2px 12px #f8b4cc88; }
+.subtitle { color: #a06080; font-size: 1rem; margin-bottom: 2rem; }
+
+.card { background: rgba(255,255,255,0.85); backdrop-filter: blur(8px); border-radius: 24px; border: 1.5px solid #f7c8da; padding: 2rem 2.5rem; max-width: 420px; width: 100%; box-shadow: 0 8px 32px #f0a0c020; transition: all 0.3s ease; }
+.card.hide-for-letter { opacity: 0; pointer-events: none; transform: scale(0.9); }
+
+.hint-sms { background-color: #ffffff; padding: 10px 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; font-size: 16px; color: #d63384; font-weight: bold; animation: bounce 2s infinite; border: 1px solid #ffccd5; display: inline-block; }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+.envelope-container { position: relative; cursor: pointer; transition: transform 0.3s; margin-bottom: 1.5rem; display: inline-block; }
+.envelope-container:hover { transform: scale(1.05); }
+
+.emoji-mail { font-size: 120px; user-select: none; transition: opacity 0.3s; display: block; animation: mailBounce 2s ease-in-out infinite; }
+@keyframes mailBounce { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-20px) scale(1.08); } }
+
+.letter-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; z-index: 50; }
+.letter-modal.open { opacity: 1; pointer-events: auto; }
+
+.paper { background: #fffdf6; background-image: linear-gradient(#e6dfd3 1px, transparent 1px); background-size: 100% 30px; width: 340px; min-height: 400px; padding: 40px 30px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; transform: translateY(50px) scale(0.9); transition: transform 0.4s ease; line-height: 30px; color: #444; font-size: 16px; text-align: left; }
+.letter-modal.open .paper { transform: translateY(0) scale(1); }
+
+.letter-content { margin-top: 10px; white-space: pre-line; }
+.letter-content h3 { color: #d63384; margin-bottom: 15px; line-height: 30px; font-family: 'Segoe UI', sans-serif; }
+
+.close-btn { position: absolute; bottom: -60px; left: 50%; transform: translateX(-50%); background-color: #ff477e; color: white; border: none; padding: 10px 25px; border-radius: 20px; font-size: 15px; cursor: pointer; box-shadow: 0 4px 10px rgba(255, 71, 126, 0.4); transition: background 0.2s; font-weight: bold; }
+.close-btn:hover { background-color: #e03165; }
+
+.question2 { font-size: 1.15rem; color: #8b2252; font-weight: 500; margin-bottom: 1.8rem; line-height: 1.6; }
+.btn-row { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.btn-yes { background: linear-gradient(135deg,#e8426e,#f07aa0); color: #fff; border: none; border-radius: 50px; padding: .85rem 2.5rem; font-size: 1.1rem; font-weight: 500; cursor: pointer; transition: transform .15s,box-shadow .15s; box-shadow: 0 4px 16px #e8426e44; width: 180px; }
+.btn-yes:hover { transform: scale(1.06); box-shadow: 0 6px 24px #e8426e55; }
+.btn-no { background: rgba(200,150,170,0.15); color: #c07090; border: 1.5px solid #e8b4cc; border-radius: 50px; padding: .85rem 2.5rem; font-size: 1.1rem; cursor: pointer; transition: background .2s,transform .4s cubic-bezier(.34,1.56,.64,1); width: 180px; position: relative; }
+.btn-no:hover { background: rgba(200,150,170,0.28); }
+.picker-wrap { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
+.picker-wrap label { font-size: .85rem; color: #a06080; text-align: left; font-weight: 500; margin-bottom: .2rem; display: block; }
+.picker-wrap input[type="date"],.picker-wrap input[type="time"] { width: 100%; padding: .65rem 1rem; border-radius: 12px; border: 1.5px solid #f0c0d0; font-size: 1rem; color: #7a2040; background: #fff8fb; outline: none; transition: border .2s; }
+.picker-wrap input:focus { border-color: #e8426e; box-shadow: 0 0 0 3px #f0a0c030; }
+.btn-confirm { background: linear-gradient(135deg,#e8426e,#f07aa0); color: #fff; border: none; border-radius: 50px; padding: .85rem 2.5rem; font-size: 1.05rem; font-weight: 500; cursor: pointer; width: 100%; transition: transform .15s,box-shadow .15s; box-shadow: 0 4px 16px #e8426e44; }
+.btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 8px 24px #e8426e55; }
+.result-date { font-size: 1.1rem; color: #c2456a; font-weight: 500; margin: 1rem 0; background: #fff0f6; border-radius: 16px; padding: 1rem 1.5rem; border: 1.5px solid #f7c8da; line-height: 1.8; }
+.result-msg { color: #8b2252; font-size: .95rem; line-height: 1.7; margin-top: .5rem; }
+.hearts-row { font-size: 1.8rem; margin-top: 1rem; animation: pulse 1.5s ease-in-out infinite; }
+.flower-deco { position: fixed; font-size: 2.2rem; opacity: .55; pointer-events: none; z-index: 0; }
+.progress-dots { display: flex; gap: .5rem; justify-content: center; margin-bottom: 1.5rem; }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: #f0c0d0; transition: background .3s; }
+.dot.active { background: #e8426e; }
+.notification-badge { background: #e8426e; color: #fff; border-radius: 50px; font-size: .8rem; padding: .2rem .8rem; display: inline-block; margin-bottom: 1rem; animation: bounce .8s ease-in-out infinite; }
+.confirm-btns { display: flex; gap: 1rem; justify-content: center; margin-top: .5rem; }
+.btn-sure-yes { background: linear-gradient(135deg,#e8426e,#f07aa0); color: #fff; border: none; border-radius: 50px; padding: .75rem 2rem; font-size: 1rem; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px #e8426e44; transition: transform .15s; }
+.btn-sure-yes:hover { transform: scale(1.05); }
+.btn-sure-no { background: rgba(200,150,170,0.15); color: #c07090; border: 1.5px solid #e8b4cc; border-radius: 50px; padding: .75rem 2rem; font-size: 1rem; cursor: pointer; transition: background .2s; }
+.btn-sure-no:hover { background: rgba(200,150,170,0.28); }
+.rejected-card { background: rgba(255,255,255,0.88); backdrop-filter: blur(8px); border-radius: 24px; border: 1.5px solid #d4b0bc; padding: 2rem 2.5rem; max-width: 420px; width: 100%; box-shadow: 0 8px 32px #c0608020; text-align: center; }
+.rejected-icon { font-size: 4rem; margin-bottom: 1rem; display: block; }
+.rejected-title { font-family: 'Dancing Script',cursive; font-size: 2.2rem; color: #a03560; margin-bottom: .5rem; }
+.rejected-subtitle { color: #a06080; font-size: .95rem; margin-bottom: 1.5rem; line-height: 1.6; }
+.rejected-msg { background: #fff0f6; border: 1.5px solid #e8b4c8; border-radius: 16px; padding: 1.2rem 1.4rem; color: #8b2252; font-size: .95rem; line-height: 1.8; margin-bottom: 1.5rem; }
+.rejected-msg em { font-style: normal; font-size: 1.3rem; display: block; margin-bottom: .5rem; }
+.btn-restart { background: rgba(200,150,170,0.15); color: #c07090; border: 1.5px solid #e8b4cc; border-radius: 50px; padding: .6rem 1.8rem; font-size: .95rem; cursor: pointer; transition: background .2s; margin-top: .5rem; }
+.btn-restart:hover { background: rgba(200,150,170,0.28); }
+
+.cursor-heart { position: fixed; pointer-events: none; font-size: 18px; animation: heartFade 1s ease-out forwards; z-index: 9999; }
+@keyframes heartFade { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-25px) scale(.3); opacity: 0; } }
+
+.view-log-btn { background: rgba(255,255,255,0.75); color: #c07090; border: 1.5px solid #f0c0d0; border-radius: 50px; padding: .45rem 1.2rem; font-size: .82rem; cursor: pointer; transition: background .2s, box-shadow .2s; display: inline-flex; align-items: center; gap: .35rem; margin-bottom: 1rem; box-shadow: 0 2px 8px #f0a0c018; }
+.view-log-btn:hover { background: rgba(255,255,255,0.95); box-shadow: 0 4px 14px #e8426e22; }
+
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(180,80,120,0.22); backdrop-filter: blur(7px); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; pointer-events: none; transition: opacity .35s; }
+.modal-overlay.show { opacity: 1; pointer-events: all; }
+
+.modal-box { background: #fff; border-radius: 28px; border: 2px solid #f7c8da; padding: 2.2rem 1.8rem; max-width: 360px; width: 92%; box-shadow: 0 12px 48px #e8426e33; text-align: center; transform: scale(.88) translateY(24px); transition: transform .38s cubic-bezier(.34,1.56,.64,1); }
+.modal-overlay.show .modal-box { transform: scale(1) translateY(0); }
+.modal-icon { font-size: 2.8rem; margin-bottom: .6rem; display: block; animation: pulse 1.8s ease-in-out infinite; }
+.modal-title { font-family: 'Dancing Script',cursive; font-size: 1.7rem; color: #c2456a; margin-bottom: .8rem; }
+.modal-date-box { background: linear-gradient(135deg,#fff0f6,#fff8f0); border: 1.5px solid #f7c8da; border-radius: 16px; padding: .9rem 1.1rem; margin: .8rem 0; font-size: 1rem; color: #8b2252; line-height: 1.9; }
+.modal-date-box strong { font-size: 1.1rem; color: #c2456a; display: block; margin-bottom: .2rem; }
+.modal-countdown { background: #fff0f6; border-radius: 12px; padding: .55rem 1rem; font-size: .88rem; color: #c2456a; margin: .4rem 0 1rem; font-weight: 600; }
+.modal-note { color: #a06080; font-size: .83rem; margin-bottom: 1rem; line-height: 1.6; }
+.modal-close { background: linear-gradient(135deg,#e8426e,#f07aa0); color: #fff; border: none; border-radius: 50px; padding: .75rem 2.5rem; font-size: 1rem; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px #e8426e44; transition: transform .15s; width: 100%; }
+.modal-close:hover { transform: scale(1.04); }
+.modal-hearts { font-size: 1.3rem; margin-top: .9rem; letter-spacing: .3rem; }
+
+.log-modal-box { background: #fff; border-radius: 28px; border: 2px solid #f7c8da; padding: 1.8rem 1.6rem; max-width: 400px; width: 94%; max-height: 82vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 12px 48px #e8426e33; transform: scale(.88) translateY(24px); transition: transform .38s cubic-bezier(.34,1.56,.64,1); }
+.modal-overlay.show .log-modal-box { transform: scale(1) translateY(0); }
+.log-modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.log-modal-title { font-family: 'Dancing Script',cursive; font-size: 1.5rem; color: #c2456a; }
+.log-x { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #c07090; padding: .2rem .5rem; border-radius: 8px; transition: background .2s; }
+.log-x:hover { background: #fff0f6; }
+.log-list { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: .65rem; padding-right: .2rem; }
+.log-list::-webkit-scrollbar { width: 4px; }
+.log-list::-webkit-scrollbar-thumb { background: #f0c0d0; border-radius: 4px; }
+.log-item { background: linear-gradient(135deg,#fff0f6,#fff8fb); border: 1.5px solid #f7c8da; border-radius: 16px; padding: .85rem 1rem; text-align: left; cursor: pointer; transition: box-shadow .2s, transform .15s; position: relative; }
+.log-item:hover { box-shadow: 0 4px 16px #e8426e22; transform: translateY(-1px); }
+.log-item-num { position: absolute; top: .65rem; right: .85rem; font-size: .72rem; color: #d090a8; font-weight: 600; }
+.log-item-date { font-size: .93rem; color: #c2456a; font-weight: 600; margin-bottom: .15rem; }
+.log-item-time { font-size: .82rem; color: #a06080; }
+.log-item-saved { font-size: .72rem; color: #c0a0b0; margin-top: .25rem; }
+.log-empty { text-align: center; color: #c0a0b0; padding: 2rem 0; font-size: .93rem; }
+</style>
+</head>
+<body>
+
+<!-- ============ QUIZ (FIRST) ============ -->
+<div id="quizOverlay">
+
+  <span class="quiz-heart-deco" style="top:8%; left:6%; font-size:1.6rem; animation-delay:0s;">💕</span>
+  <span class="quiz-heart-deco" style="top:14%; left:88%; font-size:1.1rem; animation-delay:.4s;">🤍</span>
+  <span class="quiz-heart-deco" style="top:26%; left:16%; font-size:.9rem; animation-delay:.8s;">💗</span>
+  <span class="quiz-heart-deco" style="top:20%; left:78%; font-size:1.4rem; animation-delay:1.2s;">💖</span>
+  <span class="quiz-heart-deco" style="top:78%; left:10%; font-size:1.5rem; animation-delay:.6s;">💞</span>
+  <span class="quiz-heart-deco" style="top:84%; left:90%; font-size:1.1rem; animation-delay:1.6s;">🩷</span>
+  <span class="quiz-heart-deco" style="top:70%; left:82%; font-size:.9rem; animation-delay:2s;">💘</span>
+  <span class="quiz-heart-deco" style="top:88%; left:30%; font-size:1.2rem; animation-delay:.2s;">💕</span>
+  <span class="quiz-heart-deco" style="top:6%; left:40%; font-size:1rem; animation-delay:1.4s;">🤍</span>
+  <span class="quiz-heart-deco" style="top:50%; left:4%; font-size:1.1rem; animation-delay:1.8s;">💗</span>
+  <span class="quiz-heart-deco" style="top:46%; left:94%; font-size:1.3rem; animation-delay:1s;">💖</span>
+  <span class="quiz-heart-deco" style="top:92%; left:60%; font-size:1rem; animation-delay:2.4s;">🩷</span>
+
+  <div class="quiz-box">
+
+    <div id="q1" class="question active">
+      <div class="quiz-dots"><div class="quiz-dot active"></div><div class="quiz-dot"></div><div class="quiz-dot"></div></div>
+      <!-- GIF-ээ энд оруулна: src-г өөрийн gif URL эсвэл файлын нэрээр солино -->
+      <img class="quiz-gif" src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcnQ3MW9qOTRpZWhrYm13Y3BiZHZ4cW1lNXV0YTc0dDY1azJpZzZ1diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/oEEoPosuO5uuQNJRQl/giphy.gif" alt="cute gif" />
+      <p>7 хоногт дор хаяж 2-3 удаа нар мандах эсвэл жаргахыг харахад урт насалдаг гэнээ, Би харин жархан жил чамайг харж байж болох уу?</p>
+      <div id="q1-wrap">
+        <button id="q1yes" style="left:50%; transform:translateX(-60px);" onclick="goQ2()">Тийм</button>
+        <button id="q1no" style="left:50%; transform:translateX(20px);">Үгүй</button>
+      </div>
+    </div>
+
+    <div id="q2" class="question">
+      <div class="quiz-dots"><div class="quiz-dot"></div><div class="quiz-dot active"></div><div class="quiz-dot"></div></div>
+      <img class="quiz-gif" src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdzZ6bXJiajlkM2I0NjRpMTFqanc4eGdsZ28yZG91NHZ2dG1lMHI5dyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/rpf0Du8NasK6Q/giphy.gif" alt="cute gif" />
+      <p>Хэрвээ дэлхий нарыг тойрохоо больвол дэлхий сүйрэх учир би чамтай ойрхон байж болох уу?</p>
+      <p>Дэлхий сүйрэх гээд байгаа шүү</p>
+      <div id="q2-wrap">
+        <button id="q2yes" onclick="goQ3()">Тийм</button>
+        <button id="q2no" onclick="shrinkNo()">Үгүй</button>
+      </div>
+    </div>
+
+    <div id="q3" class="question">
+      <div class="quiz-dots"><div class="quiz-dot"></div><div class="quiz-dot"></div><div class="quiz-dot active"></div></div>
+      <img class="quiz-gif" src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdHJuNDZyMGNhNHd1bXoxZHZ6ZHNtaXQ4eDdpdGM2dW1haGY1aHZtMiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Gdck8plbP2DnNBDPUD/giphy.gif" alt="cute gif" />
+      <p>Би чамд татагдаад байна учир нь нарны гадаргын татах хүч дэлхийнхээс 28 дахин их гэнээ</p>
+      <p>Тэгэхээр миний чамд сайн гэдэг нь шинжлэх ухаан болон физикийн хуулиар батлагдлаа</p>
+      <p>Харин би чамд жоохон ч гэсэн таалагддаг уу?<p>
+      <div id="q3-wrap">
+        <button onclick="finishQuiz()" style="transform:translate(-90px,-50%); z-index:1;">Тийм</button>
+        <button id="q3no" onclick="multiplyYes()" style="transform:translate(20px,-50%); z-index:2;">Үгүй</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MAIN SITE (HIDDEN UNTIL QUIZ DONE) ============ -->
+<div id="mainSite" style="display:none;">
+
+  <audio id="bgMusic" loop>
+    <source src="MAGIC.mp3" type="audio/mpeg">
+  </audio>
+
+  <div id="fakeNotif" style="position:fixed; top:20px; right:-400px; background:white; padding:15px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,.15); transition:all .7s; z-index:9999; font-size:14px;">
+    📩 New Message <br>
+    🌹 Би тэр өдрийг хүлээж байна...
+  </div>
+
+  <div id="secretMessage" style="position:fixed; top:80px; right:-500px; background:white; padding:15px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,.15); transition:.7s; z-index:9999;">
+    💖 Энэ захидал зөвхөн чамд зориулагдсан...
+  </div>
+
+  <div id="secretFlower" style="position:fixed; bottom:15px; left:15px; font-size:35px; cursor:pointer; z-index:9999;">
+    🌸
+  </div>
+
+  <div id="app"></div>
+
+  <div class="screen" id="screen1">
+
+    <div class="hint-sms" id="hintSms">
+      💬 Танд захидал ирлээ. Дээр нь дарж нээнэ үү! 👇
+    </div>
+
+    <div class="envelope-container" id="envelope">
+      <div class="emoji-mail">💌</div>
+    </div>
+
+    <h1 class="title"></h1>
+    <p class="subtitle">Сайн бодоорой...</p>
+
+    <button class="view-log-btn hidden" id="viewLogBtn" onclick="openLogModal()">📋 Товлосон өдөр харах</button>
+
+    <div class="card" id="mainQuestionCard">
+      <div class="progress-dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+      <p class="question2">Надтай хамт болзоонд явах уу? Хөөрхнөө💖🌹</p>
+      <div class="btn-row">
+        <button class="btn-yes" onclick="sayYes()">💕 Тэгье!</button>
+        <button class="btn-no" id="noBtn" onclick="handleNo()">💔Үгүй</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="letter-modal" id="letterModal">
+    <div class="paper">
+      <div class="letter-content">
+        <h3>Сайна уу хөөрхнөө чамд энэ захидал очих өдрийн мэнд✨</h3>
+        💕Өөрийг чинь санан дурсахдаа би
+        Өглөө болгон нар ширтдэг
+        Цайран туяарах илчит нарыг
+        Царайлаг чинийхээ сэтгэлтэй зүйрлэдэг
+        Тэнүүн орчлонд чи намайг
+        Тэврэн дулаацуулах илчит наран
+        Тэр л чигээрээ чи миний
+        Тэнгэрийн доорхи хоёр дахь наран💕
+      </div>
+      <button class="close-btn" id="closeBtn">Хаах ✖</button>
+    </div>
+  </div>
+
+  <div class="screen hidden" id="screen2">
+    <span class="emoji-big">🗓️</span>
+    <h1 class="title">Хэзээ завтай вэ?</h1>
+    <p class="subtitle">Чамайг татгалзахгүй гэж мэдсэн юм аа...🌷</p>
+    <div class="card">
+      <div class="progress-dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+      <div class="picker-wrap">
+        <div><label>📅 Огноо сонгох</label><input type="date" id="datePicker" /></div>
+        <div><label>🕐 Цаг сонгох</label><input type="time" id="timePicker" value="18:00" /></div>
+      </div>
+      <button class="btn-confirm" onclick="confirmDate()">✨ Сонгох</button>
+    </div>
+  </div>
+
+  <div class="screen hidden" id="screen3">
+    <span class="emoji-big">🎉</span>
+    <h1 class="title">Баярлалаа хөөрхнөө</h1>
+    <div class="card">
+      <div class="progress-dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+      <div class="notification-badge">📱 Шинэ мэдэгдэл</div>
+      <p style="color:#8b2252;font-size:.9rem;margin-bottom:.5rem">Таны сонгосон өдөр:</p>
+      <div class="result-date" id="resultDate">—</div>
+      <p class="result-msg" id="resultMsg"></p>
+      <div class="hearts-row">💖 🌹 💖</div>
+      <button class="btn-restart" style="margin-top:1.2rem" onclick="restartAll()">🔄 Эхнээс эхлэх</button>
+    </div>
+  </div>
+
+  <div class="screen hidden" id="screen4">
+    <span class="emoji-big">🥺</span>
+    <h1 class="title">Татгалзлаа гэжүүдээ? үнэхээрүү удаан төлөвлөсөн юмсан:(</h1>
+    <p class="subtitle">Дахиад нэг бодоод үзээрэй... 🌸</p>
+    <div class="card">
+      <p class="question2" style="margin-bottom:1.5rem">Итгэлтэй байна уу? 🌷</p>
+      <div class="confirm-btns">
+        <button class="btn-sure-yes" onclick="backToStart()">💕 Үгүй...</button>
+        <button class="btn-sure-no" onclick="showRejected()">💔 Тиймээ...</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen hidden" id="screen5">
+    <span class="rejected-icon">💔</span>
+    <div class="rejected-card">
+      <div class="rejected-title">Би хаягдлаа🥺...</div>
+      <div class="rejected-subtitle"> 🌸</div>
+      <div class="rejected-msg">
+        <em>🥀</em>
+        Зүгээрдээ.<br>
+        Би чиний сонголтыг хүндэтгэж байна.<br>
+        Үргэлж хөөрхөн инээж яваарай... 🌙<br><br>
+        <span style="font-size:.85rem;color:#b07090">Магадгүй бодол чинь өөрчлөгдвөл... ✨</span>
+      </div>
+      <button class="btn-sure-no" onclick="location.href='about:blank'">❌ Exit</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="confirmOverlay" onclick="closeConfirmOutside(event)">
+    <div class="modal-box">
+      <span class="modal-icon">💌</span>
+      <div class="modal-title">Таны сонгосон өдөр</div>
+      <div class="modal-date-box">
+        <strong id="modalDateTitle">—</strong>
+        <span id="modalDateSub">—</span>
+      </div>
+      <div class="modal-countdown" id="modalCountdown">⏳ Тооцоолж байна...</div>
+      <p class="modal-note"> Болзоот өдрөө мартвал "🔄 Эхнээс эхлэх" дараад <span style="font-size:.85rem;color:#920606"> товлосон өдөр харах гэж байгаа жүү </span> 📌<br>Хэрвээ өдрөө өөрчлөх бол дахиад эхлэхэд л болно шүү🌹</p>
+      <button class="modal-close" onclick="closeConfirmModal()">💖 Ойлголоо!</button>
+      <div class="modal-hearts">💕 🌸 💕</div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="logOverlay" onclick="closeLogOutside(event)">
+    <div class="log-modal-box">
+      <div class="log-modal-header">
+        <div class="log-modal-title">📋 Товлосон өдөр</div>
+        <button class="log-x" onclick="closeLogModal()">✕</button>
+      </div>
+      <div class="log-list" id="logList"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+/* ===================================================== */
+/* ================  QUIZ LOGIC  ====================== */
+/* ===================================================== */
+
+function moveQ1No(){
+  var btn = document.getElementById('q1no');
+  var parent = btn.parentElement;
+  var pw = parent.clientWidth;
+  var ph = parent.clientHeight;
+  var x = Math.random() * (pw - 100);
+  var y = Math.random() * (ph - 40);
+  btn.style.left = x + 'px';
+  btn.style.top = y + 'px';
+  btn.style.transform = 'none';
+  btn.style.position = 'absolute';
+}
+document.getElementById('q1no').addEventListener('mouseenter', moveQ1No);
+document.getElementById('q1no').addEventListener('touchstart', moveQ1No);
+
+function goQ2(){
+  document.getElementById('q1').classList.remove('active');
+  document.getElementById('q2').classList.add('active');
+}
+
+var q2scale = 1;
+function shrinkNo(){
+  q2scale += 0.6;
+  var yesBtn = document.getElementById('q2yes');
+  yesBtn.style.fontSize = (16 + q2scale * 16) + 'px';
+  yesBtn.style.padding = (10 + q2scale * 12) + 'px ' + (24 + q2scale * 20) + 'px';
+
+  var noBtn = document.getElementById('q2no');
+  var newSize = Math.max(16 - q2scale * 3, 9);
+  noBtn.style.fontSize = newSize + 'px';
+  noBtn.style.padding = Math.max(10 - q2scale * 2, 3) + 'px ' + Math.max(24 - q2scale * 3, 6) + 'px';
+}
+
+function goQ3(){
+  document.getElementById('q2').classList.remove('active');
+  document.getElementById('q3').classList.add('active');
+}
+
+var yesPositions = [{x: -90, y: 0}];
+var yesCount = 1;
+
+function getNonOverlapPosition(){
+  var x, y, ok, tries = 0;
+  do {
+    x = Math.random() * 400 - 200;
+    y = Math.random() * 400 - 200;
+    ok = true;
+    for (var i = 0; i < yesPositions.length; i++) {
+      var dx = x - yesPositions[i].x;
+      var dy = y - yesPositions[i].y;
+      var dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 70) { ok = false; break; }
+    }
+    tries++;
+  } while (!ok && tries < 50);
+  return {x: x, y: y};
+}
+
+function multiplyYes(){
+  var container = document.getElementById('q3-wrap');
+  var newButtonsCount = yesCount;
+
+  for (var i = 0; i < newButtonsCount; i++) {
+    var pos = getNonOverlapPosition();
+    yesPositions.push(pos);
+
+    var btn = document.createElement('button');
+    btn.textContent = 'Тийм';
+    btn.className = 'q3-extra-yes';
+    btn.onclick = finishQuiz;
+    btn.style.position = 'absolute';
+    btn.style.left = '50%';
+    btn.style.top = '50%';
+    btn.style.transform = 'translate(' + pos.x + 'px,' + pos.y + 'px)';
+    btn.style.zIndex = '1';
+    container.appendChild(btn);
+  }
+
+  yesCount += newButtonsCount;
+}
+
+function finishQuiz(){
+  document.getElementById('quizOverlay').remove();
+  document.getElementById('mainSite').style.display = 'block';
+  revealSite();
+}
+
+/* ===================================================== */
+/* ================  MAIN SITE LOGIC  ================= */
+/* ===================================================== */
+
+document.addEventListener("click", (e) => {
+  for (let i = 0; i < 25; i++) {
+    const flower = document.createElement("div");
+    flower.className = "flower-burst";
+    flower.textContent = ["🌸","🌺","🌼","🌷","❀","✿","💮","🌻"][Math.floor(Math.random()*8)];
+    flower.style.left = e.clientX + "px";
+    flower.style.top = e.clientY + "px";
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 100 + Math.random() * 200;
+    const x = Math.cos(angle) * distance;
+    const y = Math.sin(angle) * distance;
+    flower.style.setProperty("--x", `${x}px`);
+    flower.style.setProperty("--y", `${y}px`);
+    document.body.appendChild(flower);
+    setTimeout(() => flower.remove(), 1200);
+  }
+});
+
+document.addEventListener("mousemove", function(e){
+  const heart = document.createElement("div");
+  heart.className = "cursor-heart";
+  heart.innerText = ["💖","🌸","💕"][Math.floor(Math.random()*3)];
+  heart.style.left = e.clientX + "px";
+  heart.style.top = e.clientY + "px";
+  document.body.appendChild(heart);
+  setTimeout(()=>{ heart.remove(); },1000);
+});
+
+document.addEventListener("click", function(){
+  const music = document.getElementById("bgMusic");
+  music.volume = 0;
+  music.play().catch(()=>{});
+  const fade = setInterval(()=>{
+    if(music.volume < 0.05){ music.volume += 0.01; }
+    else{ clearInterval(fade); }
+  },200);
+},{once:true});
+
+const flowers = ["🌸","🌺","🌼","🌷","❀","✿","💮","🌻"];
+const petals=['🌸','🌺','🌼','🌷','❀','✿','💮'];
+
+function spawnPetal(){
+  const app = document.getElementById('app');
+  if(!app) return;
+  const el=document.createElement('div');
+  el.className='petal';
+  el.textContent=petals[Math.floor(Math.random()*petals.length)];
+  el.style.left=Math.random()*100+'%';
+  el.style.fontSize=(14+Math.random()*14)+'px';
+  const dur=4+Math.random()*5;
+  el.style.animationDuration=dur+'s';
+  el.style.animationDelay=Math.random()*dur+'s';
+  el.style.opacity=0.4+Math.random()*0.5;
+  app.appendChild(el);
+  setTimeout(()=>el.remove(),(dur+2)*1000);
+}
+
+const LOG_KEY = 'dateInvite_log';
+const LAST_KEY = 'dateInvite_last';
+
+function getLog(){ try{ return JSON.parse(localStorage.getItem(LOG_KEY)||'[]'); }catch(e){return [];} }
+function saveLog(a){ localStorage.setItem(LOG_KEY, JSON.stringify(a)); }
+function getLast(){ try{ return JSON.parse(localStorage.getItem(LAST_KEY)||'null'); }catch(e){return null;} }
+function saveLast(d,t){ localStorage.setItem(LAST_KEY, JSON.stringify({date:d,time:t})); }
+
+let noCount = 0;
+let countdownInterval;
+
+const noMessages = [
+  "🥺 Дахиад нэг боддоо...",
+  "🌹 Итгэлтэй байна уу?",
+  "💕 Би хүлээж байж чадна шүү",
+  "😢 Миний зүрх өвдөөд эхэллээ..."
+];
+
+function calcCountdown(dt){
+  const diff = dt - new Date();
+  if(diff<=0) return '🎉 Өнөөдөр уулзах өдөр!';
+  const days=Math.floor(diff/(1000*60*60*24));
+  const hours=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+  const mins=Math.floor((diff%(1000*60*60))/(1000*60));
+  if(days>0) return `⏳ ${days} өдөр ${hours} цаг ${mins} минутын дараа`;
+  if(hours>0) return `⏳ ${hours} цаг ${mins} минутын дараа`;
+  return `⏳ ${mins} минутын дараа`;
+}
+function formatDate(d,t){
+  const dt=new Date(d+'T'+t);
+  const opts={year:'numeric',month:'long',day:'numeric',weekday:'long'};
+  return dt.toLocaleDateString('mn-MN',opts);
+}
+function periodOf(t){
+  const h=parseInt(t.split(':')[0]);
+  return h<12?'өглөөний':h<18?'өдрийн':'оройн';
+}
+function periodOfCap(t){
+  const h=parseInt(t.split(':')[0]);
+  return h<12?'Өглөөний':h<18?'Өдрийн':'Оройн';
+}
+
+function showScreen(id){
+  ['screen1','screen2','screen3','screen4','screen5'].forEach(s=>{
+    document.getElementById(s).classList.add('hidden');
+  });
+  document.getElementById(id).classList.remove('hidden');
+}
+
+function updateViewBtn(){
+  const btn = document.getElementById('viewLogBtn');
+  const log = getLog();
+  if(log.length > 0) btn.classList.remove('hidden');
+  else btn.classList.add('hidden');
+}
+
+function showNotification(){
+  const notif=document.getElementById("fakeNotif");
+  notif.style.right="20px";
+  setTimeout(()=>{ notif.style.right="-400px"; },4000);
+}
+
+function handleNo(){
+  const msg = document.createElement("div");
+  msg.innerHTML = noMessages[Math.floor(Math.random()*noMessages.length)];
+  msg.style.position = "fixed";
+  msg.style.top = "20%";
+  msg.style.left = "50%";
+  msg.style.transform = "translateX(-50%)";
+  msg.style.background = "white";
+  msg.style.padding = "12px 20px";
+  msg.style.borderRadius = "20px";
+  msg.style.zIndex = "99999";
+  document.body.appendChild(msg);
+  setTimeout(()=>{ msg.remove(); },2000);
+
+  noCount++;
+  const btn=document.getElementById('noBtn');
+
+  if(noCount>=5){
+    const yesBtn = document.querySelector(".btn-yes");
+    for(let i=0;i<6;i++){
+      const clone = yesBtn.cloneNode(true);
+      clone.style.position="absolute";
+      clone.style.left=Math.random()*80+"%";
+      clone.style.top=Math.random()*80+"%";
+      document.body.appendChild(clone);
+    }
+  }
+
+  if(noCount>=3){
+    showScreen('screen4');
+    return;
+  }
+
+  const range=300;
+  const x=(Math.random()-.5)*range*2;
+  const y=(Math.random()-.5)*range;
+  btn.style.transform=`translate(${x}px,${y}px)`;
+}
+
+function sayYes(){
+  const today=new Date();
+  const yy=today.getFullYear();
+  const mm=String(today.getMonth()+1).padStart(2,'0');
+  const dd=String(today.getDate()).padStart(2,'0');
+  document.getElementById('datePicker').min=`${yy}-${mm}-${dd}`;
+  showScreen('screen2');
+}
+
+function confirmDate(){
+  const d=document.getElementById('datePicker').value;
+  const t=document.getElementById('timePicker').value;
+  if(!d){ alert('Огноогоо сонгоорой 🌸'); return; }
+
+  const log=getLog();
+  log.unshift({ id:Date.now(), date:d, time:t, savedAt:new Date().toLocaleString('mn-MN') });
+  saveLog(log);
+  saveLast(d,t);
+
+  restoreScreen3(d,t);
+  showScreen('screen3');
+  setTimeout(showNotification,1500);
+  for(let i=0;i<80;i++){ setTimeout(spawnPetal,i*80); }
+  setTimeout(()=> openConfirmModal(d,t), 900);
+}
+
+function restoreScreen3(d,t){
+  document.getElementById('resultDate').innerHTML=`📅 ${formatDate(d,t)}<br>🕐 ${periodOf(t)} ${t} цаг`;
+  document.getElementById('resultMsg').innerHTML=`<strong>${formatDate(d,t)}</strong>-ны ${t} цагт уулзая! 🌹<br>Энэ мөчийг тэсэн ядан хүлээж байна... 💕`;
+  showScreen('screen3');
+}
+
+function restartAll(){
+  localStorage.removeItem(LAST_KEY);
+  noCount=0;
+  document.getElementById('noBtn').style.transform='translate(0,0)';
+  updateViewBtn();
+  showScreen('screen1');
+}
+
+function backToStart(){
+  noCount=0;
+  document.getElementById('noBtn').style.transform='translate(0,0)';
+  showScreen('screen1');
+}
+
+function showRejected(){
+  localStorage.removeItem(LAST_KEY);
+  const log=getLog();
+  log.unshift({ id:Date.now(), rejected:true, savedAt:new Date().toLocaleString('mn-MN') });
+  saveLog(log);
+  updateViewBtn();
+  showScreen('screen5');
+}
+
+function openConfirmModal(d,t){
+  const targetDate = new Date(d+'T'+t);
+  document.getElementById('modalDateTitle').textContent=`📅 ${formatDate(d,t)}`;
+  document.getElementById('modalDateSub').textContent=`🕐 ${periodOfCap(t)} ${t} цаг`;
+
+  clearInterval(countdownInterval);
+  countdownInterval = setInterval(()=>{
+    document.getElementById('modalCountdown').textContent = calcCountdown(targetDate);
+  },1000);
+
+  document.getElementById('confirmOverlay').classList.add('show');
+}
+function closeConfirmModal(){ document.getElementById('confirmOverlay').classList.remove('show'); }
+function closeConfirmOutside(e){ if(e.target===document.getElementById('confirmOverlay')) closeConfirmModal(); }
+
+function openLogModal(){
+  renderLog();
+  document.getElementById('logOverlay').classList.add('show');
+}
+function closeLogModal(){ document.getElementById('logOverlay').classList.remove('show'); }
+function closeLogOutside(e){ if(e.target===document.getElementById('logOverlay')) closeLogModal(); }
+
+function renderLog(){
+  const log=getLog();
+  const el=document.getElementById('logList');
+  if(log.length===0){
+    el.innerHTML='<div class="log-empty">📭 Одоогоор болзоот өдөр товлогдоогүй байна.</div>';
+    return;
+  }
+  el.innerHTML=log.map((e,i)=>{
+    if(e.rejected){
+      return `<div class="log-item" style="border-color:#d4b0bc;background:linear-gradient(135deg,#fdf2f2,#fff8f8);">
+        <div class="log-item-num">#${log.length-i}</div>
+        <div class="log-item-date" style="color:#a03560;">💔 Татгалзлаа</div>
+        <div class="log-item-time" style="color:#b07090;">Болзоог зөвшөөрөөгүй байна</div>
+        <div class="log-item-saved">🗓 Бүртгэсэн: ${e.savedAt}</div>
+      </div>`;
+    }
+    const h=parseInt(e.time.split(':')[0]);
+    const per=h<12?'Өглөөний':h<18?'Өдрийн':'Оройн';
+    return `<div class="log-item">
+      <div class="log-item-num">#${log.length-i}</div>
+      <div class="log-item-date">📅 ${formatDate(e.date,e.time)}</div>
+      <div class="log-item-time">🕐 ${per} ${e.time} цаг</div>
+      <div class="log-item-saved">🗓 Бүртгэсэн: ${e.savedAt}</div>
+    </div>`;
+  }).join('');
+}
+
+/* called once when quiz finishes and main site becomes visible */
+function revealSite(){
+  const app = document.getElementById("app");
+  for (let i = 0; i < 30; i++) {
+    const div = document.createElement("div");
+    div.className = "flower-deco";
+    div.innerText = flowers[Math.floor(Math.random() * flowers.length)];
+    div.style.position = "absolute";
+    div.style.top = Math.random() * 100 + "%";
+    div.style.left = Math.random() * 100 + "%";
+    div.style.fontSize = (40 + Math.random() * 24) + "px";
+    div.style.opacity = 0.5 + Math.random() * 0.5;
+    div.style.pointerEvents = "none";
+    app.appendChild(div);
+  }
+
+  setInterval(spawnPetal,600);
+  for(let i=0;i<8;i++) setTimeout(spawnPetal,i*200);
+
+  document.getElementById("secretFlower").addEventListener("click",()=>{
+    alert("💕 Чи нууц цэцгийг олчихлоо!");
+  });
+
+  const envelope = document.getElementById('envelope');
+  const letterModal = document.getElementById('letterModal');
+  const closeBtn = document.getElementById('closeBtn');
+  const hintSms = document.getElementById('hintSms');
+  const mainQuestionCard = document.getElementById('mainQuestionCard');
+
+  envelope.addEventListener('click', () => {
+    letterModal.classList.add('open');
+    hintSms.style.visibility = 'hidden';
+    mainQuestionCard.classList.add('hide-for-letter');
+  });
+
+  closeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    letterModal.classList.remove('open');
+    hintSms.style.visibility = 'visible';
+    mainQuestionCard.classList.remove('hide-for-letter');
+  });
+
+  updateViewBtn();
+  const last = getLast();
+  if(last){
+    restoreScreen3(last.date, last.time);
+    setTimeout(()=> openConfirmModal(last.date, last.time), 600);
+  }
+
+  setTimeout(()=>{
+    const m=document.getElementById("secretMessage");
+    m.style.right="20px";
+    setTimeout(()=>{ m.style.right="-500px"; },5000);
+  },3000);
+}
+
+</script>
+</body>
+</html>
