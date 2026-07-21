@@ -211,6 +211,7 @@ h1.title { font-family: 'Dancing Script',cursive; font-size: 2.4rem; color: #c24
 .modal-title { font-family: 'Dancing Script',cursive; font-size: 1.7rem; color: #c2456a; margin-bottom: .8rem; }
 .modal-date-box { background: linear-gradient(135deg,#fff0f6,#fff8f0); border: 1.5px solid #f7c8da; border-radius: 16px; padding: .9rem 1.1rem; margin: .8rem 0; font-size: 1rem; color: #8b2252; line-height: 1.9; }
 .modal-date-box strong { font-size: 1.1rem; color: #c2456a; display: block; margin-bottom: .2rem; }
+.modal-activity-line { font-size: .92rem; color: #a03560; font-weight: 600; margin-top: .3rem; display: block; }
 .modal-countdown { background: #fff0f6; border-radius: 12px; padding: .55rem 1rem; font-size: .88rem; color: #c2456a; margin: .4rem 0 1rem; font-weight: 600; }
 .modal-note { color: #a06080; font-size: .83rem; margin-bottom: 1rem; line-height: 1.6; }
 .modal-close { background: linear-gradient(135deg,#e8426e,#f07aa0); color: #fff; border: none; border-radius: 50px; padding: .75rem 2.5rem; font-size: 1rem; font-weight: 500; cursor: pointer; box-shadow: 0 4px 16px #e8426e44; transition: transform .15s; width: 100%; }
@@ -231,8 +232,38 @@ h1.title { font-family: 'Dancing Script',cursive; font-size: 2.4rem; color: #c24
 .log-item-num { position: absolute; top: .65rem; right: .85rem; font-size: .72rem; color: #d090a8; font-weight: 600; }
 .log-item-date { font-size: .93rem; color: #c2456a; font-weight: 600; margin-bottom: .15rem; }
 .log-item-time { font-size: .82rem; color: #a06080; }
+.log-item-activity { font-size: .82rem; color: #a03560; font-weight: 600; margin-top: .15rem; }
 .log-item-saved { font-size: .72rem; color: #c0a0b0; margin-top: .25rem; }
 .log-empty { text-align: center; color: #c0a0b0; padding: 2rem 0; font-size: .93rem; }
+
+/* ============ ACTIVITY SELECTION SCREEN ============ */
+.activity-options { display: flex; flex-direction: column; gap: 1rem; margin-top: .5rem; }
+.activity-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  text-align: left;
+  background: #fff8fb;
+  border: 1.5px solid #f7c8da;
+  border-radius: 20px;
+  padding: 1rem 1.2rem;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
+  box-shadow: 0 4px 14px #f0a0c018;
+}
+.activity-card:hover {
+  transform: translateY(-2px);
+  border-color: #e8426e;
+  background: #fff0f6;
+  box-shadow: 0 8px 22px #e8426e30;
+}
+.activity-icon { font-size: 2.1rem; flex-shrink: 0; }
+.activity-text { display: flex; flex-direction: column; gap: .15rem; }
+.activity-label { font-size: 1rem; font-weight: 600; color: #8b2252; }
+.activity-tag { font-size: .8rem; font-weight: 600; }
+.activity-tag.extreme { color: #d4453a; }
+.activity-tag.classic { color: #b0762a; }
 </style>
 </head>
 <body>
@@ -329,7 +360,7 @@ h1.title { font-family: 'Dancing Script',cursive; font-size: 2.4rem; color: #c24
     <button class="view-log-btn hidden" id="viewLogBtn" onclick="openLogModal()">📋 Товлосон өдөр харах</button>
 
     <div class="card" id="mainQuestionCard">
-      <div class="progress-dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+      <div class="progress-dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
       <p class="question2">Надтай хамт болзоонд явах уу? Хөөрхнөө💖🌹</p>
       <div class="btn-row">
         <button class="btn-yes" onclick="sayYes()">💕 Тэгье!</button>
@@ -360,7 +391,7 @@ h1.title { font-family: 'Dancing Script',cursive; font-size: 2.4rem; color: #c24
     <h1 class="title">Хэзээ завтай вэ?</h1>
     <p class="subtitle">Чамайг татгалзахгүй гэж мэдсэн юм аа...🌷</p>
     <div class="card">
-      <div class="progress-dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+      <div class="progress-dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
       <div class="picker-wrap">
         <div><label>📅 Огноо сонгох</label><input type="date" id="datePicker" /></div>
         <div><label>🕐 Цаг сонгох</label><input type="time" id="timePicker" value="18:00" /></div>
@@ -369,11 +400,36 @@ h1.title { font-family: 'Dancing Script',cursive; font-size: 2.4rem; color: #c24
     </div>
   </div>
 
+  <div class="screen hidden" id="screen6">
+    <span class="emoji-big">🎯</span>
+    <h1 class="title">Ямар аялал хийх вэ?</h1>
+    <p class="subtitle">Хамтдаа юу хийхээ сонгооч 🌸</p>
+    <div class="card">
+      <div class="progress-dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+      <div class="activity-options">
+        <button class="activity-card" onclick="chooseActivity('atv')">
+          <span class="activity-icon">🏍️</span>
+          <span class="activity-text">
+            <span class="activity-label">ATV 4 дугуйт мотоциклын аялал</span>
+            <span class="activity-tag extreme">🔥 Extreme дэйт</span>
+          </span>
+        </button>
+        <button class="activity-card" onclick="chooseActivity('kino')">
+          <span class="activity-icon">🎬</span>
+          <span class="activity-text">
+            <span class="activity-label">Кино үзэх</span>
+            <span class="activity-tag classic">🍿 Classic дэйт</span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="screen hidden" id="screen3">
     <span class="emoji-big">🎉</span>
     <h1 class="title">Баярлалаа хөөрхнөө</h1>
     <div class="card">
-      <div class="progress-dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+      <div class="progress-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
       <div class="notification-badge">📱 Шинэ мэдэгдэл</div>
       <p style="color:#8b2252;font-size:.9rem;margin-bottom:.5rem">Таны сонгосон өдөр:</p>
       <div class="result-date" id="resultDate">—</div>
@@ -419,6 +475,7 @@ h1.title { font-family: 'Dancing Script',cursive; font-size: 2.4rem; color: #c24
       <div class="modal-date-box">
         <strong id="modalDateTitle">—</strong>
         <span id="modalDateSub">—</span>
+        <span class="modal-activity-line hidden" id="modalActivityLine">—</span>
       </div>
       <div class="modal-countdown" id="modalCountdown">⏳ Тооцоолж байна...</div>
       <p class="modal-note"> Болзоот өдрөө мартвал "🔄 Эхнээс эхлэх" дараад <span style="font-size:.85rem;color:#920606"> товлосон өдөр харах гэж байгаа жүү </span> 📌<br>Хэрвээ өдрөө өөрчлөх бол дахиад эхлэхэд л болно шүү🌹</p>
@@ -618,33 +675,41 @@ function spawnPetal(){
 let logCache = [];
 let lastCache = null;
 
+/* holds date/time picked on screen2 while the person is choosing an activity on screen6 */
+let pendingDate = null;
+let pendingTime = null;
+
 function getLog(){ return logCache; }
 function getLast(){ return lastCache; }
 
 function pushLogEntry(entry){
-  db.ref('logs').push(entry);
+  try{ db.ref('logs').push(entry); }catch(e){ console.error('Firebase-т бичихэд алдаа гарлаа:', e); }
 }
-function saveLast(d,t){
-  db.ref('last').set({date:d, time:t});
+function saveLast(d,t,activity){
+  try{ db.ref('last').set({date:d, time:t, activity: activity || null}); }catch(e){ console.error('Firebase-т бичихэд алдаа гарлаа:', e); }
 }
 function clearLast(){
-  db.ref('last').remove();
+  try{ db.ref('last').remove(); }catch(e){ console.error('Firebase-с устгахад алдаа гарлаа:', e); }
 }
 
 function attachFirebaseListeners(){
-  db.ref('logs').on('value', snapshot => {
-    const val = snapshot.val() || {};
-    logCache = Object.keys(val)
-      .map(k => val[k])
-      .sort((a,b)=> (b.id||0) - (a.id||0));
-    updateViewBtn();
-    const logOverlay = document.getElementById('logOverlay');
-    if(logOverlay && logOverlay.classList.contains('show')) renderLog();
-  });
+  try{
+    db.ref('logs').on('value', snapshot => {
+      const val = snapshot.val() || {};
+      logCache = Object.keys(val)
+        .map(k => val[k])
+        .sort((a,b)=> (b.id||0) - (a.id||0));
+      updateViewBtn();
+      const logOverlay = document.getElementById('logOverlay');
+      if(logOverlay && logOverlay.classList.contains('show')) renderLog();
+    });
 
-  db.ref('last').on('value', snapshot => {
-    lastCache = snapshot.val();
-  });
+    db.ref('last').on('value', snapshot => {
+      lastCache = snapshot.val();
+    });
+  }catch(e){
+    console.error('Firebase listener холбоход алдаа гарлаа:', e);
+  }
 }
 
 let noCount = 0;
@@ -656,6 +721,11 @@ const noMessages = [
   "💕 Би хүлээж байж чадна шүү",
   "😢 Миний зүрх өвдөөд эхэллээ..."
 ];
+
+const activityLabels = {
+  atv: '🏍️ ATV 4 дугуйт мотоциклын аялал (Extreme дэйт)',
+  kino: '🎬 Кино үзэх (Classic дэйт)'
+};
 
 function calcCountdown(dt){
   const diff = dt - new Date();
@@ -682,7 +752,7 @@ function periodOfCap(t){
 }
 
 function showScreen(id){
-  ['screen1','screen2','screen3','screen4','screen5'].forEach(s=>{
+  ['screen1','screen2','screen6','screen3','screen4','screen5'].forEach(s=>{
     document.getElementById(s).classList.add('hidden');
   });
   document.getElementById(id).classList.remove('hidden');
@@ -755,18 +825,29 @@ function confirmDate(){
   const t=document.getElementById('timePicker').value;
   if(!d){ alert('Огноогоо сонгоорой 🌸'); return; }
 
-  pushLogEntry({ id:Date.now(), date:d, time:t, savedAt:new Date().toLocaleString('mn-MN') });
-  saveLast(d,t);
+  pendingDate = d;
+  pendingTime = t;
+  showScreen('screen6');
+}
 
-  restoreScreen3(d,t);
+function chooseActivity(type){
+  const d = pendingDate;
+  const t = pendingTime;
+  if(!d || !t){ showScreen('screen2'); return; }
+  const activityLabel = activityLabels[type] || '';
+
+  pushLogEntry({ id:Date.now(), date:d, time:t, activity:activityLabel, savedAt:new Date().toLocaleString('mn-MN') });
+  saveLast(d,t,activityLabel);
+
+  restoreScreen3(d,t,activityLabel);
   showScreen('screen3');
   setTimeout(showNotification,1500);
   for(let i=0;i<80;i++){ setTimeout(spawnPetal,i*80); }
-  setTimeout(()=> openConfirmModal(d,t), 900);
+  setTimeout(()=> openConfirmModal(d,t,activityLabel), 900);
 }
 
-function restoreScreen3(d,t){
-  document.getElementById('resultDate').innerHTML=`📅 ${formatDate(d,t)}<br>🕐 ${periodOf(t)} ${t} цаг`;
+function restoreScreen3(d,t,activity){
+  document.getElementById('resultDate').innerHTML=`📅 ${formatDate(d,t)}<br>🕐 ${periodOf(t)} ${t} цаг${activity ? `<br>🎯 ${activity}` : ''}`;
   document.getElementById('resultMsg').innerHTML=`<strong>${formatDate(d,t)}</strong>-ны ${t} цагт уулзая! 🌹<br>Энэ мөчийг тэсэн ядан хүлээж байна... 💕`;
   showScreen('screen3');
 }
@@ -774,6 +855,8 @@ function restoreScreen3(d,t){
 function restartAll(){
   clearLast();
   noCount=0;
+  pendingDate=null;
+  pendingTime=null;
   document.getElementById('noBtn').style.transform='translate(0,0)';
   updateViewBtn();
   showScreen('screen1');
@@ -792,10 +875,18 @@ function showRejected(){
   showScreen('screen5');
 }
 
-function openConfirmModal(d,t){
+function openConfirmModal(d,t,activity){
   const targetDate = new Date(d+'T'+t);
   document.getElementById('modalDateTitle').textContent=`📅 ${formatDate(d,t)}`;
   document.getElementById('modalDateSub').textContent=`🕐 ${periodOfCap(t)} ${t} цаг`;
+
+  const activityLine = document.getElementById('modalActivityLine');
+  if(activity){
+    activityLine.textContent = `🎯 ${activity}`;
+    activityLine.classList.remove('hidden');
+  } else {
+    activityLine.classList.add('hidden');
+  }
 
   clearInterval(countdownInterval);
   countdownInterval = setInterval(()=>{
@@ -836,6 +927,7 @@ function renderLog(){
       <div class="log-item-num">#${log.length-i}</div>
       <div class="log-item-date">📅 ${formatDate(e.date,e.time)}</div>
       <div class="log-item-time">🕐 ${per} ${e.time} цаг</div>
+      ${e.activity ? `<div class="log-item-activity">🎯 ${e.activity}</div>` : ''}
       <div class="log-item-saved">🗓 Бүртгэсэн: ${e.savedAt}</div>
     </div>`;
   }).join('');
@@ -886,14 +978,18 @@ function revealSite(){
   attachFirebaseListeners();
 
   // check shared "last confirmed date" once on load, so it shows on ANY device
-  db.ref('last').once('value').then(snapshot => {
-    const last = snapshot.val();
-    lastCache = last;
-    if(last){
-      restoreScreen3(last.date, last.time);
-      setTimeout(()=> openConfirmModal(last.date, last.time), 600);
-    }
-  });
+  try{
+    db.ref('last').once('value').then(snapshot => {
+      const last = snapshot.val();
+      lastCache = last;
+      if(last){
+        restoreScreen3(last.date, last.time, last.activity);
+        setTimeout(()=> openConfirmModal(last.date, last.time, last.activity), 600);
+      }
+    }).catch(e => console.error('Firebase-с уншихад алдаа гарлаа:', e));
+  }catch(e){
+    console.error('Firebase-с уншихад алдаа гарлаа:', e);
+  }
 
   setTimeout(()=>{
     const m=document.getElementById("secretMessage");
